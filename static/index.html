@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Spelling Bee</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+        });
+    </script>
+</head>
+<body>
+<div class="game-container">
+    <div class="hexagon-wrapper">
+        <div class="hexagon" id="center-letter">E</div>
+        <div class="hexagon">A</div>
+        <div class="hexagon">S</div>
+        <div class="hexagon">P</div>
+        <div class="hexagon">L</div>
+        <div class="hexagon">I</div>
+        <div class="hexagon">N</div>
+    </div>
+    <button id="solve">Solve</button>
+    <div id="word-list"></div>
+</div>
+</body>
+</html>

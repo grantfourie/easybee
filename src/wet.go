@@ -18,7 +18,6 @@ import (
 )
 
 func MakeWordExistenceTree(words []string) *WordExistenceTreeNode {
-	defer TrackTime("MakeWordExistenceTree")()
 	headNode := &WordExistenceTreeNode{IsHead: true, children: make(map[string]*WordExistenceTreeNode, 26)}
 	currNode := headNode
 	for _, w := range words {
@@ -72,8 +71,6 @@ func (wet *WordExistenceTreeNode) Children() []tree.Node {
 }
 
 func (wet *WordExistenceTreeNode) Solve(letters []string, required string) []string {
-
-	defer TrackTime("Solve")()
 
 	resultsChan := make(chan string)
 	resultsSlice := make([]string, 0)

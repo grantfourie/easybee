@@ -1,2 +1,4 @@
-*.txt
 *.zip
+*.wasm
+wasm_exec.js
+src
