@@ -46,7 +46,7 @@ jobs:
 
         # Runs a single command using the runners shell
         - name: Build wasm file
-          run: GOOS=js GOARCH=wasm go build -o ./public/main.wasm ./src/
+          run: GOOS=js GOARCH=wasm go build -o ./public/main.wasm ./src/wasm
 
         - name: Copy JS helper script for executing Go WASM
           run: cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" ./public/
