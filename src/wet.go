@@ -14,7 +14,7 @@ import (
 	"slices"
 	"sort"
 	"strings"
-	"sync/atomic"
+	"sync"
 )
 
 func MakeWordExistenceTree(words []string) *WordExistenceTreeNode {
@@ -73,30 +73,38 @@ func (wet *WordExistenceTreeNode) Children() []tree.Node {
 func (wet *WordExistenceTreeNode) Solve(letters []string, required string) []string {
 
 	resultsChan := make(chan string)
+	done := make(chan error)
 	resultsSlice := make([]string, 0)
-	workerCounter := int64(len(letters))
+	wg := &sync.WaitGroup{}
+	wg.Add(len(letters))
 
 	for _, c := range letters {
-		go wet.solve(c, letters, required, &workerCounter, resultsChan)
+		c := c
+		go wet.solve(c, letters, required, resultsChan, wg)
 	}
 
-	for atomic.LoadInt64(&workerCounter) != 0 {
+	go func() {
+		wg.Wait()
+		done <- nil
+	}()
+
+	fmt.Println("solvers started")
+
+	for {
 		select {
 		case r := <-resultsChan:
 			resultsSlice = append(resultsSlice, r)
-			fmt.Printf("Found Word: [%v]\n", strings.ToUpper(r))
-		default:
-			continue
+		case _ = <-done:
+			fmt.Println("all children finished")
+			return resultsSlice
 		}
 	}
-
-	return resultsSlice
 }
 
-func (wet *WordExistenceTreeNode) solve(start string, letters []string, required string, workerCounter *int64, results chan<- string) {
+func (wet *WordExistenceTreeNode) solve(start string, letters []string, required string, results chan<- string, wg *sync.WaitGroup) {
 	currNode, found := wet.children[start]
 	if !found {
-		atomic.AddInt64(workerCounter, -1)
+		wg.Done()
 		return
 	}
 
@@ -111,10 +119,10 @@ func (wet *WordExistenceTreeNode) solve(start string, letters []string, required
 
 			// continue down the tree
 			for _, l := range letters {
-				atomic.AddInt64(workerCounter, 1)
-				go child.solve(l, letters, required, workerCounter, results)
+				wg.Add(1)
+				go child.solve(l, letters, required, results, wg)
 			}
 		}
 	}
-	atomic.AddInt64(workerCounter, -1)
+	wg.Done()
 }

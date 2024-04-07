@@ -6,11 +6,11 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"flag"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+	"syscall/js"
 )
 
 const (
@@ -21,20 +21,41 @@ const (
 
 func main() {
 
-	letters := flag.String("letters", "finalty", "the set of letters in the puzzle, center letter first")
-	flag.Parse()
-
 	r, err := FetchLexicon(LEXICON_SOURCE)
 	if err != nil {
-		panic("Failed to fetch source: " + err.Error())
+		fmt.Println("Failed to fetch source: " + err.Error())
 	}
-
 	words, _ := MakeWordList(bufio.NewScanner(r), FilterWords)
 	wet := MakeWordExistenceTree(words)
-	letterList := strings.Split(*letters, "")
 
-	results := wet.Solve(letterList, letterList[0])
-	fmt.Printf("Found (%v) words\n", len(results))
+	doc := js.Global().Get("document")
+	solveBtn := doc.Call("getElementById", "solveBtn")
+	solveBtn.Call("addEventListener", "click", js.FuncOf(
+		func(this js.Value, args []js.Value) any {
+			letters, requiredLetter := getLetters()
+			results := wet.Solve(letters, requiredLetter)
+			fmt.Printf("solved and found:\n%v\n", results)
+			return nil
+		},
+	))
+
+	select {}
+}
+
+func getLetters() ([]string, string) {
+	letters := make([]string, 0, 7)
+	hexagons := js.Global().Get("document").Call("getElementsByClassName", "hexagon")
+	for i := 0; i < hexagons.Length(); i++ {
+		hexagon := hexagons.Index(i)
+		char := strings.ToLower(hexagon.Get("value").String())
+		letters = append(letters, char)
+	}
+
+	middleHexagon := js.Global().Get("document").Call("getElementById", "center-letter")
+	requiredLetter := strings.ToLower(middleHexagon.Get("value").String())
+
+	fmt.Printf("input letters %v\n", letters)
+	return letters, requiredLetter
 }
 
 func FetchLexicon(src string) (io.Reader, error) {
