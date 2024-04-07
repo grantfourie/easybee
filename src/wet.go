@@ -1,14 +1,7 @@
-/*
- * Copyright (c) 2024. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
- * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
- * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
- * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
- * Vestibulum commodo. Ut rhoncus gravida arcu.
- */
-
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/shivamMg/ppds/tree"
 	"slices"
@@ -85,7 +78,7 @@ func (wet *WordExistenceTreeNode) Solve(letters []string, required string) []str
 
 	go func() {
 		wg.Wait()
-		done <- nil
+		done <- errors.New("all done")
 	}()
 
 	fmt.Println("solvers started")
@@ -94,8 +87,8 @@ func (wet *WordExistenceTreeNode) Solve(letters []string, required string) []str
 		select {
 		case r := <-resultsChan:
 			resultsSlice = append(resultsSlice, r)
-		case _ = <-done:
-			fmt.Println("all children finished")
+		case err := <-done:
+			fmt.Println("all children finished: ", err.Error())
 			return resultsSlice
 		}
 	}
@@ -118,8 +111,8 @@ func (wet *WordExistenceTreeNode) solve(start string, letters []string, required
 			}
 
 			// continue down the tree
+			wg.Add(len(letters))
 			for _, l := range letters {
-				wg.Add(1)
 				go child.solve(l, letters, required, results, wg)
 			}
 		}

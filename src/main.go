@@ -30,11 +30,19 @@ func main() {
 
 	doc := js.Global().Get("document")
 	solveBtn := doc.Call("getElementById", "solveBtn")
+	resultList := doc.Call("getElementById", "resultList")
+
 	solveBtn.Call("addEventListener", "click", js.FuncOf(
 		func(this js.Value, args []js.Value) any {
 			letters, requiredLetter := getLetters()
 			results := wet.Solve(letters, requiredLetter)
-			fmt.Printf("solved and found:\n%v\n", results)
+			resultList.Set("innerHTML", "")
+			for _, word := range results {
+				listItem := doc.Call("createElement", "li")
+				listItem.Set("textContent", word)
+				resultList.Call("appendChild", listItem)
+			}
+
 			return nil
 		},
 	))

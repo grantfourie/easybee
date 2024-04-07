@@ -48,7 +48,10 @@ button:hover {
     background-color: #555;
 }
 
-#word-list {
+#resultList {
+    height: 200px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrollbar */
+    border: 1px solid #ddd; /* Optional: adds a border */
     margin-top: 20px;
     text-align: left;
 }
