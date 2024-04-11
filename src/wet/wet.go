@@ -3,13 +3,12 @@ package wet
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"slices"
+	"sort"
 	"strings"
-	"sync"
 )
 
 const (
@@ -45,67 +44,31 @@ func MakeWordExistenceTree(words []string) *WordExistenceTreeNode {
 }
 
 type WordExistenceTreeNode struct {
-	Children   map[string]*WordExistenceTreeNode `json:"Children"`
-	IsHead     bool                              `json:"-"`
-	IsDictWord bool                              `json:"-"`
-	Word       string                            `json:"value"`
+	Children   map[string]*WordExistenceTreeNode
+	IsHead     bool
+	IsDictWord bool
+	Word       string
 }
 
 func (wet *WordExistenceTreeNode) Solve(letters []string, required string) []string {
+	results := make([]string, 0)
 
-	resultsChan := make(chan string)
-	done := make(chan error)
-	resultsSlice := make([]string, 0)
-	wg := &sync.WaitGroup{}
-	wg.Add(len(letters))
-
-	for _, c := range letters {
-		c := c
-		go wet.solve(c, letters, required, resultsChan, wg)
+	if wet.IsDictWord && strings.Contains(wet.Word, required) {
+		results = append(results, wet.Word)
 	}
 
-	go func() {
-		wg.Wait()
-		done <- errors.New("all done")
-	}()
-
-	fmt.Println("solvers started")
-
-	for {
-		select {
-		case r := <-resultsChan:
-			resultsSlice = append(resultsSlice, r)
-		case err := <-done:
-			fmt.Println("all Children finished: ", err.Error())
-			return resultsSlice
-		}
-	}
-}
-
-func (wet *WordExistenceTreeNode) solve(start string, letters []string, required string, results chan<- string, wg *sync.WaitGroup) {
-	currNode, found := wet.Children[start]
-	if !found {
-		wg.Done()
-		return
-	}
-
-	for r, child := range currNode.Children {
-		// is this path allowed ?
+	for r, child := range wet.Children {
 		if slices.Contains(letters, r) {
 
-			// have we found an allowed word
-			if child.IsDictWord && strings.Contains(child.Word, string(required)) {
-				results <- child.Word
-			}
-
-			// continue down the tree
-			wg.Add(len(letters))
-			for _, l := range letters {
-				go child.solve(l, letters, required, results, wg)
-			}
+			results = append(results, child.Solve(letters, required)...)
 		}
 	}
-	wg.Done()
+
+	sort.Slice(results, func(i, j int) bool {
+		return results[i] < results[j]
+	})
+	return results
+
 }
 
 func FetchLexicon(src string) (io.Reader, error) {

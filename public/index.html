@@ -15,14 +15,14 @@
 </head>
 <body>
 <div class="game-container">
-    <div class="hexagon-wrapper">
+    <div class="hexagon-container">
+        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon" id="upper-left-letter"></input>
+        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon" id="upper-mid-letter"></input>
+        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon" id="upper-right-letter"></input>
+        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon" id="lower-left-letter"></input>
         <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon" id="center-letter"></input>
-        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon"></input>
-        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon"></input>
-        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon"></input>
-        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon"></input>
-        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon"></input>
-        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon"></input>
+        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon" id="lower-right-letter"></input>
+        <input type="text" maxlength="1" pattern="[A-Za-z]" placeholder="_" class="hexagon" id="lower-mid-letter"></input>
     </div>
     <button id="solveBtn">Solve</button>
     <ul id="resultList"></ul>

@@ -3,7 +3,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 80vh;
     background-color: #f3f3f3;
 }
 
@@ -11,28 +11,49 @@ body {
     text-align: center;
 }
 
-.hexagon-wrapper {
-    display: flex;
-    flex-wrap: wrap;
+.hexagon-container {
+    justify-content: center;
+    align-items: center;
     width: 210px;
-    margin: auto;
+    position: relative;
 }
 
 .hexagon {
-    width: 60px;
-    height: 60px;
-    background-color: #ddd;
+    background-color: #a8a8a8;
+    width: 50px;
+    height: 50px;
     margin: 5px;
-    display: flex;
     text-align: center;
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
-    color: #333;
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    border: none;
+    position: relative;
+
+    clip-path: polygon(50% -50%,100% 50%,50% 150%,0 50%);
 }
 
 #center-letter {
-    background-color: #bbb;
+    background-color: #e5d11b;
+}
+
+#upper-right-letter {
+    top: 31px;
+    right: 20px;
+}
+
+#upper-left-letter {
+    top: 31px;
+    left: 20px;
+}
+
+#lower-left-letter {
+    top: 31px;
+    left: 20px;
+}
+
+#lower-right-letter {
+    top: 31px;
+    right: 20px;
 }
 
 button {
@@ -49,9 +70,9 @@ button:hover {
 }
 
 #resultList {
-    height: 200px; /* Adjust height as needed */
-    overflow-y: auto; /* Enable vertical scrollbar */
-    border: 1px solid #ddd; /* Optional: adds a border */
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
     margin-top: 20px;
     text-align: left;
 }

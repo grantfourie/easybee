@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Go Build Wasm
 
 # Controls when the workflow will run
@@ -25,7 +23,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
     deploy:
       environment:
@@ -44,9 +41,8 @@ jobs:
           with:
             go-version: '1.21'
 
-        # Runs a single command using the runners shell
         - name: Build wasm file
-          run: GOOS=js GOARCH=wasm go build -o ./public/main.wasm ./src/wasm
+          run: GOOS=js GOARCH=wasm go build -o ./public/main.wasm ./src/web
 
         - name: Copy JS helper script for executing Go WASM
           run: cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" ./public/

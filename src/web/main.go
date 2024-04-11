@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	wet "github.com/grantfourie/easybee/src/wet"
+	"github.com/grantfourie/easybee/src/wet"
 	"strings"
 	"syscall/js"
 )
